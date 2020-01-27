@@ -43,21 +43,28 @@ var getRandomElement = function (arrayElements) {
 
 // Создание мага со случайными параметрами
 var createWizard = function () {
-  var newWizard = {};
-  newWizard.name = getRandomElement(NAMES) + ' ' + getRandomElement(SURNAMES);
-  newWizard.coatColor = getRandomElement(COAT_COLORS);
-  newWizard.eyesColor = getRandomElement(EYES_COLORS);
-  return newWizard;
+  return {
+    name: getRandomElement(NAMES) + ' ' + getRandomElement(SURNAMES),
+    coatColor: getRandomElement(COAT_COLORS),
+    eyesColor: getRandomElement(EYES_COLORS)
+  };
 };
 
 // Создание магов для панели похожих
-var similarWizards = function () {
-  var wizardSimilarList = [];
+var createSimilarWizards = function () {
+  var wizards = [];
+  for (var i = 0; i < NUMBER_SIMILAR_WIZARDS; i++) {
+    wizards.push(createWizard());
+  }
+  return wizards;
+};
+
+// Получение магов для добавление в панель похожих
+var getSimilarWizards = function (wizards) {
   var fragment = document.createDocumentFragment();
 
-  for (var i = 0; i < NUMBER_SIMILAR_WIZARDS; i++) {
-    wizardSimilarList.push(createWizard());
-    fragment.appendChild(renderWizard(wizardSimilarList[i]));
+  for (var i = 0; i < wizards.length; i++) {
+    fragment.appendChild(renderWizard(wizards[i]));
   }
   return fragment;
 };
@@ -72,8 +79,7 @@ var setupWindow = document.querySelector(Selectors.setupWindow);
 removeClass(setupWindow);
 
 // Добавление магов в список панели похожих
-var setupSimilarList = setupWindow.querySelector(Selectors.setupSimilarList);
-setupSimilarList.appendChild(similarWizards());
+setupWindow.querySelector(Selectors.setupSimilarList).appendChild(getSimilarWizards(createSimilarWizards()));
 
 // Отображение панели похожих магов
 removeClass(document.querySelector(Selectors.setupSimilarPanel));
