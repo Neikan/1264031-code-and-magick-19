@@ -20,16 +20,9 @@ var similarWizardsList = setupPanelSimilarWizards.querySelector('.setup-similar-
 
 // Параметры мага
 var inputUserName = setupWindow.querySelector('input[name="username"]');
-var wizardSetup = setupWindow.querySelector('.setup-player');
-var wizardCoatColor = wizardSetup.querySelector('.wizard-coat');
-var inputCoatColor = wizardSetup.querySelector('input[name="coat-color"]');
-var wizardEyesColor = wizardSetup.querySelector('.wizard-eyes');
-var inputEyesColor = wizardSetup.querySelector('input[name="eyes-color"]');
-
-// Параметры фаербола
-var fireballSetup = setupWindow.querySelector('.setup-fireball-wrap');
-var wizardFireballColor = fireballSetup.querySelector('.setup-fireball');
-var inputFireballColor = fireballSetup.querySelector('input[name="fireball-color"]');
+var wizardCoatColor = setupWindow.querySelector('.wizard-coat');
+var wizardEyesColor = setupWindow.querySelector('.wizard-eyes');
+var wizardFireballColor = setupWindow.querySelector('.setup-fireball');
 
 // Получение шаблона мага
 var wizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
@@ -99,51 +92,61 @@ inputUserName.setAttribute('maxlength', MAX_USERNAME_LENGTH);
 // Изменение цвета глаз персонажа
 var changeWizardEyesColor = function () {
   wizardEyesColor.style.fill = getRandomElement(EYES_COLORS);
-  inputEyesColor.value = wizardEyesColor.style.fill;
+  setupWindow.querySelector('input[name="eyes-color"]').value = wizardEyesColor.style.fill;
 };
 
 // Изменение цвета плаща персонажа
 var changeWizardCoatColor = function () {
   wizardCoatColor.style.fill = getRandomElement(COAT_COLORS);
-  inputCoatColor.value = wizardCoatColor.style.fill;
+  setupWindow.querySelector('input[name="coat-color"]').value = wizardCoatColor.style.fill.style.fill;
 };
 
 // Изменение цвета фаербола персонажа
 var changeWizardFireballColor = function () {
   var newColor = getRandomElement(FIREBALL_COLORS);
   wizardFireballColor.style.backgroundColor = newColor;
-  inputFireballColor.value = newColor;
+  setupWindow.querySelector('input[name="fireball-color"]').value = newColor;
 };
 
 // Добавление фокуса для аватара пользователя
 var setupOpen = document.querySelector('.setup-open-icon');
 setupOpen.setAttribute('tabindex', 0);
 
-// Прослушка событий для открытия окна .setup
-setupOpen.addEventListener('click', function () {
-  openSetupWindow();
-}, {once: true});
 
-setupOpen.addEventListener('keydown', function (evt) {
+// Хендлеры и прослушка событий для открытия окна .setup
+var setupOpenClickHandler = function () {
+  openSetupWindow();
+};
+
+var setupOpenKeyDownHandler = function (evt) {
   if (evt.keyCode === KEYCODE_ENTER) {
     openSetupWindow();
   }
-}, {once: true});
+};
+
+setupOpen.addEventListener('click', setupOpenClickHandler);
+setupOpen.addEventListener('keydown', setupOpenKeyDownHandler);
 
 // Установка фокуса для кнопки закрытия окна
 var setupClose = setupWindow.querySelector('.setup-close');
 setupClose.setAttribute('tabindex', 0);
 
-// Прослушка событий для закрытия окна .setup
-setupClose.addEventListener('click', function () {
+// Хендлеры для закрытия окна .setup
+var setupCloseClickHandler = function () {
   closeSetupWindow();
-});
+};
 
-setupClose.addEventListener('keydown', function (evt) {
+var setupCloseKeyDownHandler = function (evt) {
   if (evt.keyCode === KEYCODE_ENTER) {
     closeSetupWindow();
   }
-});
+};
+
+var setupWindowClickHandler = function (evt) {
+  if ((evt.keyCode === KEYCODE_ESC) && (document.activeElement !== inputUserName)) {
+    closeSetupWindow();
+  }
+};
 
 // Отправка изменений в окне .setup
 var saveSetup = setupWindow.querySelector('.setup-submit');
@@ -151,19 +154,18 @@ var saveChanges = function () {
   setupWindow.querySelector('.setup-wizard-form').submit();
 };
 
-// Обработчик сценариев закрытия окна по кнопке Escape
-var setupWindowClickHandler = function (evt) {
-  if ((evt.keyCode === KEYCODE_ESC) && (document.activeElement !== inputUserName)) {
-    closeSetupWindow();
-  }
-};
-
 // Открытие окна .setup
 var openSetupWindow = function () {
+  setupOpen.removeEventListener('click', setupOpenClickHandler);
+  setupOpen.removeEventListener('keydown', setupOpenKeyDownHandler);
+
   removeClass(setupWindow, CLASS_TO_DELETE);
   displaySimilarWizards();
   removeClass(setupPanelSimilarWizards, CLASS_TO_DELETE);
+
   document.addEventListener('keydown', setupWindowClickHandler);
+  setupClose.addEventListener('click', setupCloseClickHandler);
+  setupClose.addEventListener('keydown', setupCloseKeyDownHandler);
   wizardCoatColor.addEventListener('click', changeWizardCoatColor);
   wizardEyesColor.addEventListener('click', changeWizardEyesColor);
   wizardFireballColor.addEventListener('click', changeWizardFireballColor);
@@ -172,22 +174,17 @@ var openSetupWindow = function () {
 
 // Закрытие окна .setup
 var closeSetupWindow = function () {
+  setupOpen.addEventListener('click', setupOpenClickHandler);
+  setupOpen.addEventListener('keydown', setupOpenKeyDownHandler);
+
   addClass(setupPanelSimilarWizards, CLASS_TO_DELETE);
   addClass(setupWindow, CLASS_TO_DELETE);
+
   document.removeEventListener('keydown', setupWindowClickHandler);
   wizardCoatColor.removeEventListener('click', changeWizardCoatColor);
   wizardEyesColor.removeEventListener('click', changeWizardEyesColor);
   wizardFireballColor.removeEventListener('click', changeWizardFireballColor);
-
-  setupOpen.addEventListener('click', function () {
-    openSetupWindow();
-  }, {once: true});
-
-  setupOpen.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === KEYCODE_ENTER) {
-      openSetupWindow();
-    }
-  }, {once: true});
-
+  setupClose.removeEventListener('click', setupCloseClickHandler);
+  setupClose.removeEventListener('keydown', setupCloseKeyDownHandler);
   saveSetup.removeEventListener('click', saveChanges);
 };
