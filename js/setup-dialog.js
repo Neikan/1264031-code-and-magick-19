@@ -41,7 +41,7 @@
 
     // Хендлер завершения перемещения окна
     var mouseClickUpHandler = function (upEvt) {
-      upEvt.preventDefault(); // перехватываем дефотное открытие окна загрузки изображения
+      upEvt.preventDefault(); // перехватываем дефолтное открытие окна загрузки изображения
 
       document.removeEventListener('mousemove', mouseMoveHandler);
       document.removeEventListener('mouseup', mouseClickUpHandler);

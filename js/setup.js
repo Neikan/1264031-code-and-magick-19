@@ -71,8 +71,6 @@
 
     window.util.removeClass(setupWindow, CLASS_TO_DELETE);
     window.wizards.displaySimilarWizards();
-    // window.util.removeClass(setupPanelSimilarWizards, CLASS_TO_DELETE);
-    window.wizards.displaySimilarWizards();
 
     document.addEventListener('keydown', setupWindowClickHandler);
     setupClose.addEventListener('click', setupCloseClickHandler);
