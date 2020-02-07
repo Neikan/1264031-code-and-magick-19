@@ -2,7 +2,7 @@
 
 (function () {
 
-  window.setup.dialogUpload.addEventListener('mousedown', function (evt) {
+  window.setup.setupWindow.querySelector('.upload').addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
     // Размеры рабочей области браузера и окна .setup
