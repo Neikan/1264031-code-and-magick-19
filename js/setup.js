@@ -8,6 +8,7 @@
 
   // Окно .setup и его параметры
   var setupWindow = document.querySelector('.setup');
+  var setupWizardForm = setupWindow.querySelector('.setup-wizard-form');
 
   var zeroCoordinatesSetupWindow = {
     x: setupWindow.style.top,
@@ -54,10 +55,11 @@
     }
   };
 
-  // Отправка изменений в окне .setup
-  var saveSetup = setupWindow.querySelector('.setup-submit');
-  var saveChanges = function () {
-    setupWindow.querySelector('.setup-wizard-form').submit();
+  var saveChangesSetupWizardHandler = function (evt) {
+    evt.preventDefault();
+    window.save(new FormData(setupWizardForm), function () {
+      closeSetupWindow();
+    }, window.util.showErrorMessageHandler);
   };
 
   // Открытие окна .setup
@@ -70,7 +72,7 @@
     setupOpen.removeEventListener('keydown', setupOpenKeyDownHandler);
 
     window.util.removeClass(setupWindow, CLASS_TO_DELETE);
-    window.wizards.displaySimilarWizards();
+    window.load(window.wizards.displaySimilarWizards, window.util.showErrorMessageHandler);
 
     document.addEventListener('keydown', setupWindowClickHandler);
     setupClose.addEventListener('click', setupCloseClickHandler);
@@ -78,7 +80,8 @@
     window.player.wizardCoatColor.addEventListener('click', window.player.changeWizardCoatColor);
     window.player.wizardEyesColor.addEventListener('click', window.player.changeWizardEyesColor);
     window.player.wizardFireballColor.addEventListener('click', window.player.changeWizardFireballColor);
-    saveSetup.addEventListener('click', saveChanges);
+
+    setupWizardForm.addEventListener('submit', saveChangesSetupWizardHandler);
   };
 
   // Закрытие окна .setup
@@ -88,14 +91,15 @@
 
     window.util.addClass(setupWindow, CLASS_TO_DELETE);
     window.wizards.displayOffSimilarWizards();
-
+    window.util.removeErrorMessage();
     document.removeEventListener('keydown', setupWindowClickHandler);
     window.player.wizardCoatColor.removeEventListener('click', window.player.changeWizardCoatColor);
     window.player.wizardEyesColor.removeEventListener('click', window.player.changeWizardEyesColor);
     window.player.wizardFireballColor.removeEventListener('click', window.player.changeWizardFireballColor);
     setupClose.removeEventListener('click', setupCloseClickHandler);
     setupClose.removeEventListener('keydown', setupCloseKeyDownHandler);
-    saveSetup.removeEventListener('click', saveChanges);
+
+    setupWizardForm.removeEventListener('submit', saveChangesSetupWizardHandler);
   };
 
   window.setup = {
