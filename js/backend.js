@@ -7,8 +7,8 @@
   var TIMEOUT = 10000; // 10s
 
   var StatusCode = {
-    Ok: 200,
-    NotFound: 404
+    OK: 200,
+    NOT_FOUND: 404
   };
 
   window.load = function (successHandler, errorHandler) {
@@ -18,10 +18,10 @@
     xhr.addEventListener('load', function () {
 
       switch (xhr.status) {
-        case (StatusCode.Ok):
+        case (StatusCode.OK):
           successHandler(xhr.response);
           break;
-        case (StatusCode.NotFound):
+        case (StatusCode.NOT_FOUND):
           errorHandler('Сервер недоступен. Мы работаем, чтобы скорее все починить!');
           break;
         default:

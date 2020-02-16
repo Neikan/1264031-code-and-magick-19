@@ -20,15 +20,21 @@
   inputUserName.setAttribute('maxlength', MAX_USERNAME_LENGTH);
 
   // Изменение цвета глаз персонажа
-  var changeWizardEyesColor = function () {
-    wizardEyesColor.style.fill = window.util.getRandomElement(EYES_COLORS);
-    setupWindow.querySelector('input[name="eyes-color"]').value = wizardEyesColor.style.fill;
-  };
+  var changeWizardEyesColor = window.util.debounce(function () {
+    var newColor = window.util.getRandomElement(EYES_COLORS);
+    wizardEyesColor.style.fill = newColor;
+    setupWindow.querySelector('input[name="eyes-color"]').value = newColor;
+
+    window.wizards.updateSimilarWizardEyesHandler(newColor);
+  });
 
   // Изменение цвета плаща персонажа
   var changeWizardCoatColor = function () {
-    wizardCoatColor.style.fill = window.util.getRandomElement(COAT_COLORS);
-    setupWindow.querySelector('input[name="coat-color"]').value = wizardCoatColor.style.fill;
+    var newColor = window.util.getRandomElement(COAT_COLORS);
+    wizardCoatColor.style.fill = newColor;
+    setupWindow.querySelector('input[name="coat-color"]').value = newColor;
+
+    window.wizards.updateSimilarWizardCoatHandler(newColor);
   };
 
   // Изменение цвета фаербола персонажа

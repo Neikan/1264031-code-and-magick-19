@@ -4,6 +4,10 @@
 
   var NUMBER_SIMILAR_WIZARDS = 4;
 
+  var similarWizardsArray = [];
+  var eyesColor = window.player.wizardEyesColor.style.fill;
+  var coatColor = window.player.wizardCoatColor.style.fill;
+
   var setupPanelSimilarWizards = window.setup.setupWindow.querySelector('.setup-similar');
   var similarWizardsList = setupPanelSimilarWizards.querySelector('.setup-similar-list');
 
@@ -19,23 +23,54 @@
     return wizardElement;
   };
 
-  // Получение магов для добавление в панель похожих
-  var getSimilarWizards = function (wizards) {
-    window.util.getShuffleArray(wizards);
-
-    var fragment = document.createDocumentFragment();
-
+  // Отрисовка магов на панели похожих
+  var renderSimilarWizards = function (wizards) {
+    similarWizardsList.innerHTML = '';
     for (var i = 0; i < NUMBER_SIMILAR_WIZARDS; i++) {
-      fragment.appendChild(renderWizard(wizards[i]));
+      similarWizardsList.appendChild(renderWizard(wizards[i]));
     }
-    return fragment;
   };
 
-  // Вывод похожих магов запросом с сервера
-  var displaySimilarWizards = function (wizards) {
-    similarWizardsList.innerHTML = '';
-    similarWizardsList.appendChild(getSimilarWizards(wizards));
-    window.util.removeClass(setupPanelSimilarWizards, window.setup.CLASS_TO_DELETE);
+  // Ранжирование похожих магов
+  var getRank = function (wizard) {
+    var rank = 0;
+    if (wizard.colorCoat === coatColor) {
+      rank += 2;
+    }
+    if (wizard.colorEyes === eyesColor) {
+      rank += 1;
+    }
+    return rank;
+  };
+
+  // Обновление списка похожих магов при изменении цвета
+  var updateSimilarWizards = function () {
+    renderSimilarWizards(similarWizardsArray.slice().
+      sort(function (left, right) {
+        var rankDiff = getRank(right) - getRank(left);
+        if (rankDiff === 0) {
+          rankDiff = similarWizardsArray.indexOf(left) - similarWizardsArray.indexOf(right);
+        }
+        return rankDiff;
+      }));
+  };
+
+  var updateSimilarWizardEyesHandler = window.util.debounce(function (color) {
+    eyesColor = color;
+    updateSimilarWizards();
+  });
+
+  var updateSimilarWizardCoatHandler = window.util.debounce(function (color) {
+    coatColor = color;
+    updateSimilarWizards();
+  });
+
+  // Вывод похожих магов запросом с сервера с учетом цветов дефолтного мага игрока
+  var displaySimilarWizards = function (response) {
+    similarWizardsArray = response;
+    updateSimilarWizardEyesHandler(eyesColor);
+    updateSimilarWizardCoatHandler(coatColor);
+    updateSimilarWizards();
   };
 
   var displayOffSimilarWizards = function () {
@@ -43,8 +78,11 @@
   };
 
   window.wizards = {
+    setupPanelSimilarWizards: setupPanelSimilarWizards,
     displaySimilarWizards: displaySimilarWizards,
-    displayOffSimilarWizards: displayOffSimilarWizards
+    displayOffSimilarWizards: displayOffSimilarWizards,
+    updateSimilarWizardCoatHandler: updateSimilarWizardCoatHandler,
+    updateSimilarWizardEyesHandler: updateSimilarWizardEyesHandler
   };
 
 })();

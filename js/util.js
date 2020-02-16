@@ -2,6 +2,8 @@
 
 (function () {
 
+  var DEBOUNCE_INTERVAL = 500;
+
   // Получение случайного элемента массива
   var getRandomElement = function (arrayElements) {
     return arrayElements[Math.floor(Math.random() * arrayElements.length)];
@@ -55,13 +57,31 @@
     document.body.insertAdjacentElement('afterbegin', item);
   };
 
+  // Функция устранения "разрыва"
+  var debounce = function (callbackFunc) {
+    var lastTimeout = null;
+
+    return function () {
+      var parameters = arguments;
+
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+
+      lastTimeout = window.setTimeout(function () {
+        callbackFunc.apply(null, parameters);
+      }, DEBOUNCE_INTERVAL);
+    };
+  };
+
   window.util = {
     getRandomElement: getRandomElement,
     getShuffleArray: getShuffleArray,
     addClass: addClass,
     removeClass: removeClass,
     showErrorMessageHandler: showErrorMessageHandler,
-    removeErrorMessage: removeErrorMessage
+    removeErrorMessage: removeErrorMessage,
+    debounce: debounce
   };
 
 })();
