@@ -72,6 +72,7 @@
     setupOpen.removeEventListener('keydown', setupOpenKeyDownHandler);
 
     window.util.removeClass(setupWindow, CLASS_TO_DELETE);
+    window.util.removeClass(window.wizards.setupPanelSimilarWizards, window.setup.CLASS_TO_DELETE);
     window.load(window.wizards.displaySimilarWizards, window.util.showErrorMessageHandler);
 
     document.addEventListener('keydown', setupWindowClickHandler);
