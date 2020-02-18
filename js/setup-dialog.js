@@ -2,7 +2,9 @@
 
 (function () {
 
-  window.setup.setupWindow.querySelector('.upload').addEventListener('mousedown', function (evt) {
+  var avatarUpload = window.setup.setupWindow.querySelector('.upload');
+
+  avatarUpload.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
     // Размеры рабочей области браузера и окна .setup
@@ -65,13 +67,18 @@
       if (dragged) {
         var mouseClickPreventDefaultHandler = function (clickEvt) {
           clickEvt.preventDefault();
-          window.setup.dialogUpload.removeEventListener('click', mouseClickPreventDefaultHandler);
+          avatarUpload.removeEventListener('click', mouseClickPreventDefaultHandler);
         };
-        window.setup.dialogUpload.addEventListener('click', mouseClickPreventDefaultHandler);
+        avatarUpload.addEventListener('click', mouseClickPreventDefaultHandler);
       }
     };
 
     document.addEventListener('mousemove', mouseMoveHandler);
     document.addEventListener('mouseup', mouseClickUpHandler);
   });
+
+  window.dialog = {
+    avatarUpload: avatarUpload
+  };
+
 })();
