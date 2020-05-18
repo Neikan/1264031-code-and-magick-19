@@ -1,8 +1,8 @@
 'use strict';
 
 (function () {
-  var URL_GET = 'https://js.dump.academy/code-and-magick/data';
-  var URL_POST = 'https://js.dump.academy/code-and-magick';
+  var URL_GET = 'https://javascript.pages.academy/code-and-magick/data';
+  var URL_POST = 'https://javascript.pages.academy/code-and-magick';
 
   var TIMEOUT = 10000; // 10s
 
